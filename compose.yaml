@@ -1,12 +1,18 @@
 services:
   server:
-    build:
-      context: .
+    image: "registry/badminton_schedule:1"
+    container_name: badminton_schedule
     volumes:
       - ./data:/home/appuser/data
     ports:
       - 5000:5000
     user: "${UID:-10001}:${UID:-10001}"
+    networks:
+      - caddy_caddy
 
 volumes:
   data:
+
+networks:
+  caddy_caddy:
+    external: true
