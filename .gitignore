@@ -1,0 +1,6 @@
+**/bookings.db
+**/bookings.db-journal
+**/.venv/
+**/.idea/
+**/app.log
+**/__pycache__/

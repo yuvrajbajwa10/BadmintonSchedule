@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Court Booking Filter</title>
+    <script src="{{url_for('static', filename='scripts/htmx.2.0.1.min.js')}}"></script>
+    <script src="{{url_for('static', filename='scripts/tailwind.3.4.5.js')}}"></script>
+</head>
+
+<body class="flex flex-col w-[100%] bg-slate-600 text-blue-400 font-bold justify-center items-center *:w-full gap-y-4">
+    <div class="flex flex-row bg-slate-800 justify-between items-center gap-2 p-2">
+        <div>
+            <h1 class="text-lg">Court Booking</h1>
+        </div>
+        <div class="flex flex-row gap-2 justify-center items-center">
+            <div id="last-updated">
+                Last Updated: {{ last_updated}}
+            </div>
+            <button hx-get="/open-modal" hx-target="#modal-container"
+                class="bg-blue-500 text-white p-2 rounded-sm">Fetch and Store</button>
+        </div>
+    </div>
+    <form hx-post="/filter" hx-target="#results"
+        class="grid auto-cols-[minmax(auto, 1fr)] gap-2 justify-center max-w-lg [&>input]:px-2 [&>input]:py-1 items-center [&>label]:px-2">
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" required>
+
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" required>
+
+        <label for="start_time">Start Time:</label>
+        <input type="time" id="start_time" name="start_time" required>
+
+        <label for="end_time">End Time:</label>
+        <input type="time" id="end_time" name="end_time" required>
+
+        <button type="submit"
+            class="col-span-2 bg-blue-500 text-white rounded-sm p-2 max-w-lg justify-self-center">Filter Available
+            Courts</button>
+    </form>
+
+    <div id="results">
+    </div>
+
+    <div id="modal-container"></div>
+
+    <script>
+        // Get today's date
+        const today = new Date();
+
+        // Calculate the start and end dates
+        const startDate = new Date(today);
+        startDate.setDate(today.getDate());
+        const endDate = new Date(today);
+        endDate.setDate(today.getDate());
+
+        // Format the dates to YYYY-MM-DD
+        const formatDate = (date) => date.toISOString().split('T')[0];
+
+        // Set default date values
+        document.getElementById('start_date').value = formatDate(startDate);
+        document.getElementById('end_date').value = formatDate(endDate);
+
+        // Set default time values
+        document.getElementById('start_time').value = '19:00';
+        document.getElementById('end_time').value = '21:00';
+    </script>
+</body>
+
+</html>

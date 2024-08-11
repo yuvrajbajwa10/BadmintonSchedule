@@ -1,0 +1,80 @@
+<div class="font-sans leading-relaxed bg-slate-700 p-4">
+    <h2 class="text-2xl font-semibold mb-4 bg-slate-800 text-blue-400 p-2">Available Courts</h2>
+    <table id="courtTable" class="w-full bg-white shadow-md rounded">
+        <thead>
+            <tr class="bg-slate-800 text-blue-400 uppercase text-sm leading-normal ">
+                <th class="py-3 px-6 text-left cursor-pointer w-28" hx-get="/sort-courts" hx-target="#courtTable"
+                    hx-trigger="click">Court</th>
+                <th class="py-3 px-6 text-left cursor-pointer" hx-get="/sort-courts" hx-target="#courtTable"
+                    hx-trigger="click">Time Slots</th>
+            </tr>
+        </thead>
+        <tbody class="text-gray-200 text-sm font-light bg-slate-600">
+            {% if available_courts %}
+            {% for date, courts in available_courts.items() %}
+            <tr class="border-b border-gray-700 hover:bg-slate-700 bg-gray-950">
+                <td colspan="3" class="py-3 px-6 text-left whitespace-nowrap cursor-pointer"
+                    onclick="toggleDateGroup('{{ date }}')">
+                    <span class="font-bold">{{ date|format_date }}</span>
+                    <span class="ml-2" id="toggle-{{ date }}">▼</span>
+                </td>
+            </tr>
+            <tr class="date-group-{{ date }}">
+                <td colspan="3" class="p-0">
+                    <table class="w-full">
+                        {% for court, times_list in courts.items() %}
+                        {% for times in times_list %}
+                        {% for key, time_slots in times.items() %}
+                        <tr class="border-b border-gray-700 hover:bg-gray-700">
+                            <td class="py-3 px-6 text-left w-28">
+                                <span class="font-bold 
+                                            {% if court == 'A' %}
+                                                text-green-500
+                                            {% elif court == 'B' %}
+                                                text-blue-500
+                                            {% elif court == 'D' %}
+                                                text-white
+                                            {% endif %}">
+                                    Court {{ key|correct_court_name(court) }}
+                                </span>
+                            </td>
+                            <td class="py-3 px-6 text-left font-medium">
+                                {% for time_slot in time_slots %}
+                                <span class="bg-blue-300 text-blue-950 p-1 rounded-sm mr-1">{{ time_slot }}</span>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% endfor %}
+                        {% endfor %}
+                    </table>
+                </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="3" class="py-3 px-6 text-center">No available courts found for the selected criteria.</td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function toggleDateGroup(date) {
+        const rows = document.querySelectorAll(`.date-group-${date}`);
+        const toggle = document.getElementById(`toggle-${date}`);
+        rows.forEach(row => {
+            row.style.display = row.style.display === 'none' ? '' : 'none';
+        });
+        toggle.textContent = toggle.textContent === '▼' ? '▶' : '▼';
+    }
+
+    // Hide all date groups initially
+    document.addEventListener('DOMContentLoaded', () => {
+        const dateGroups = document.querySelectorAll('[class^="date-group-"]');
+        dateGroups.forEach(group => {
+            group.style.display = 'none';
+        });
+    });
+</script>

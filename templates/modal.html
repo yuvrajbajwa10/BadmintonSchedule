@@ -1,0 +1,43 @@
+<div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" id="modal">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <p class="text-black">
+                To the get the token value Login to the booking management system and click the bookmark (once added) to
+                get the token in your clipboard.
+            </p>
+            <a href="javascript: (function () {
+                function copyCookieValue(cookieName) {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.startsWith(cookieName + '=')) {
+                            const cookieValue = cookie.substring(cookieName.length + 1);
+                            navigator.clipboard.writeText(cookieValue)
+                            .then(() => {
+                                console.log('Cookie value copied to clipboard:', cookieValue);
+                            })
+                            .catch((error) => {
+                                console.error('Failed to copy cookie value:', error);
+                            });
+                            break;
+                        }
+                    }
+                }
+                copyCookieValue('PHPSESSID');
+            })();">Get Token (Drag to bookmarks)</a>
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Enter Cookie String</h3>
+            <div class="mt-2 px-7 py-3">
+                <input type="text" id="cookie-string" name="cookie-string"
+                    class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
+                    placeholder="Enter cookie string">
+            </div>
+            <div class="items-center px-4 py-3">
+                <button id="submit-cookie" hx-post="/fetchandstore" hx-target="#results" hx-include="#cookie-string"
+                    hx-swap="outerHTML" hx-on::after-request="document.getElementById('modal').remove()"
+                    class="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                    Submit
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
