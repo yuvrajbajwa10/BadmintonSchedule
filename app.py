@@ -10,18 +10,21 @@ from urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
 import os
 
+logging.info('Starting app...')
 app = Flask(__name__)
+if not os.path.exists('./data'):
+    os.makedirs('./data')
 
-# Set up logging to console and rotate log file with a max size of 3MB, keeping 4 backups.
+if not os.path.exists('/tmp/booking'):
+    os.makedirs('/tmp/booking')
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
-                    handlers=[RotatingFileHandler('./app.log', maxBytes=3000000, backupCount=4),
+                    handlers=[RotatingFileHandler('/tmp/booking/app.log', maxBytes=3000000, backupCount=4),
                               logging.StreamHandler()])
 
-logging.info('Starting app...')
-
-# SQLite database setup
+dbPathString = './data/bookings.db'
 def init_db():
-    conn = sqlite3.connect('bookings.db')
+    conn = sqlite3.connect(dbPathString)
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS bookings
                  (date TEXT, sport_court TEXT, data JSON)''')
@@ -30,8 +33,6 @@ def init_db():
                  (last_updated TEXT)''')
     conn.commit()
     conn.close()
-
-init_db()
 
 # Initialize global session
 session = None
@@ -85,8 +86,6 @@ def get_cookie():
         "Referer": "https://internetbookings.net.nz/smii/",
         "User-Agent": "Mozilla/5.0"
     }
-    user = os.environ.get('USER')
-    password = os.environ.get('PASS')
     payload = "start_club=&login=1&function=login&user=" + user + "&pass=" + password
     try:
         response = session.post(reqUrl, data=payload, headers=headersList)
@@ -183,7 +182,7 @@ def fetch_booking_data(date, sport_court, manual_cookie=None):
         return None
 def fetch_and_store_data(cookie_string):
     logging.info('Fetching and storing data...')
-    conn = sqlite3.connect('bookings.db')
+    conn = sqlite3.connect(dbPathString)
     dataUpdated = False
     c = conn.cursor()
     start_date = datetime.now() 
@@ -212,7 +211,7 @@ def fetch_and_store():
     dataUpdated = fetch_and_store_data(cookie_string)
     if dataUpdated:
         # Update last_updated in config table
-        conn = sqlite3.connect('bookings.db')
+        conn = sqlite3.connect(dbPathString)
         c = conn.cursor()
         c.execute("INSERT OR REPLACE INTO config (last_updated) VALUES (?)", (datetime.now().strftime('%Y-%m-%d %H:%M:%S'),))
         conn.commit()
@@ -223,7 +222,7 @@ def fetch_and_store():
     return 'Data Update Failed!'
 
 def get_last_updated():
-    conn = sqlite3.connect('bookings.db')
+    conn = sqlite3.connect(dbPathString)
     c = conn.cursor()
     c.execute("SELECT last_updated FROM config")
     last_updated = c.fetchone()
@@ -248,7 +247,7 @@ def filter_courts():
     start_date = request.form.get('start_date')
     end_date = request.form.get('end_date')
 
-    conn = sqlite3.connect('bookings.db')
+    conn = sqlite3.connect(dbPathString)
     c = conn.cursor()
 
     available_courts = {}
@@ -361,6 +360,6 @@ def correct_court_name(number, type):
 
 
 if __name__ == '__main__':
-    load_dotenv()
     logging.info('Starting app...')
+    init_db()
     app.run(debug=True)

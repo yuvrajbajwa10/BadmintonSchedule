@@ -1,0 +1,12 @@
+services:
+  server:
+    build:
+      context: .
+    volumes:
+      - ./data:/home/appuser/data
+    ports:
+      - 5000:5000
+    user: "${UID:-10001}:${UID:-10001}"
+
+volumes:
+  data:
