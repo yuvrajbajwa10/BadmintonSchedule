@@ -24,16 +24,13 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=bind,source=requirements.txt,target=requirements.txt \
     python -m pip install -r requirements.txt
 
-# Create data directory in user's home
-RUN mkdir -p /home/appuser/data
-VOLUME [ "/home/appuser/data" ]
-
-# Ensure proper permissions
-RUN chown -R appuser:appuser /home/appuser
-RUN chmod -R 755 /home/appuser/data
-
 # Switch to the non-privileged user
 USER appuser
+
+RUN mkdir -p /home/appuser/data
+RUN chown -R appuser:appuser /home/appuser
+RUN chmod -R 755 /home/appuser/data
+VOLUME [ "/home/appuser/data" ]
 
 # Copy the source code into the container
 COPY --chown=appuser:appuser . .

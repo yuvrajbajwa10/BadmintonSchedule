@@ -1,11 +1,8 @@
 <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" id="modal">
     <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
         <div class="mt-3 text-center">
-            <p class="text-black">
-                To the get the token value Login to the booking management system and click the bookmark (once added) to
-                get the token in your clipboard.
-            </p>
-            <a href="javascript: (function () {
+            <p>
+                <a href="javascript: (function () {
                 function copyCookieValue(cookieName) {
                     const cookies = document.cookie.split(';');
                     for (let i = 0; i < cookies.length; i++) {
@@ -25,6 +22,15 @@
                 }
                 copyCookieValue('PHPSESSID');
             })();">Get Token (Drag to bookmarks)</a>
+            </p>
+
+            <p class="text-black">
+                To the get the token value Login to the booking management system and click the bookmark (once added) to
+                get the token in your clipboard.
+            </p>
+            <p>
+                <a target="_blank" href="https://internetbookings.net.nz/smii/">Login in to badminton here</a>
+            </p>
             <h3 class="text-lg leading-6 font-medium text-gray-900">Enter Cookie String</h3>
             <div class="mt-2 px-7 py-3">
                 <input type="text" id="cookie-string" name="cookie-string"

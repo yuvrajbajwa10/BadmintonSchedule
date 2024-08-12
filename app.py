@@ -12,17 +12,15 @@ import os
 
 logging.info('Starting app...')
 app = Flask(__name__)
-if not os.path.exists('./data'):
-    os.makedirs('./data')
+if not os.path.exists('/home/appuser/data'):
+    os.makedirs('/home/appuser/data')
 
-if not os.path.exists('/tmp/booking'):
-    os.makedirs('/tmp/booking')
+dbPathString = '/home/appuser/data/bookings.db'
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
-                    handlers=[RotatingFileHandler('/tmp/booking/app.log', maxBytes=3000000, backupCount=4),
+                    handlers=[RotatingFileHandler('/home/appuser/data/app.log', maxBytes=3000000, backupCount=4),
                               logging.StreamHandler()])
 
-dbPathString = './data/bookings.db'
 def init_db():
     conn = sqlite3.connect(dbPathString)
     c = conn.cursor()
